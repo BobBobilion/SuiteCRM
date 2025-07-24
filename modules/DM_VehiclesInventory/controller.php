@@ -35,6 +35,15 @@ class DM_VehiclesInventoryController extends SugarController
     );
 
     /**
+     * Map actions to views - fixes "no action by that name" errors
+     */
+    protected $action_view_map = array(
+        'editview' => 'edit',
+        'detailview' => 'detail',
+        'listview' => 'list'
+    );
+
+    /**
      * Pre-action setup and validation
      *
      * @return boolean True to continue with action, false to abort
