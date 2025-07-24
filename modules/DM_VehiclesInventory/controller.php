@@ -24,6 +24,7 @@ class DM_VehiclesInventoryController extends SugarController
      * Note: 'index' => 'listview' is already handled by parent SugarController
      */
     protected $action_remap = array(
+        'index' => 'listview',  // Add this mapping to fix the "no action" error
         'decodevin' => 'decodeVIN',
         'uploadphoto' => 'uploadPhoto',
         'deletephoto' => 'deletePhoto',
@@ -44,6 +45,24 @@ class DM_VehiclesInventoryController extends SugarController
     );
 
     /**
+     * Override setup to ensure proper initialization
+     */
+    public function setup($module = '')
+    {
+        // Call parent setup first
+        parent::setup($module);
+        
+        // Log setup information for debugging
+        $GLOBALS['log']->debug("DM_VehiclesInventoryController: Setup called - Module: {$this->module}, Action: {$this->action}, Do_Action: {$this->do_action}");
+        
+        // Ensure we have proper access
+        if (!ACLController::checkAccess($this->module, 'list', true)) {
+            $this->hasAccess = false;
+            $GLOBALS['log']->debug("DM_VehiclesInventoryController: Access denied for module {$this->module}");
+        }
+    }
+
+    /**
      * Pre-action setup and validation
      *
      * @return boolean True to continue with action, false to abort
@@ -60,6 +79,23 @@ class DM_VehiclesInventoryController extends SugarController
         $GLOBALS['log']->debug("DM_VehiclesInventoryController: GET data: " . print_r($_GET, true));
 
         return true;
+    }
+
+    /**
+     * Override listview action to ensure proper module loading
+     * This handles the remapped 'index' action
+     */
+    public function action_listview()
+    {
+        $GLOBALS['log']->debug("DM_VehiclesInventoryController: Executing listview action");
+        
+        // Ensure the module is properly initialized
+        if (!$this->bean) {
+            $this->loadBean();
+        }
+        
+        // Call parent listview action
+        parent::action_listview();
     }
 
     /**
