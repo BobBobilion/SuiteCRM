@@ -238,6 +238,7 @@ $mod_strings = array(
     'LBL_PROFIT_ANALYZER' => 'Profit Analyzer',
     'LBL_AGING_ALERTS' => 'Aging Alerts',
     'LBL_INVENTORY_REPORTS' => 'Inventory Reports',
+    'LBL_RECENT_ARRIVALS' => 'Recent Arrivals',
     
     // Mobile Labels
     'LBL_MOBILE_SCAN_VIN' => 'Scan VIN',
