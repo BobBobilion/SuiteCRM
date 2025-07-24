@@ -288,6 +288,40 @@ $mod_strings = array(
     'LBL_ADD_CUSTOM_FEATURE' => 'Add Custom Feature',
     'LBL_SELECTED_FEATURES' => 'Selected Features',
     'LBL_SAVE_FEATURES' => 'Save Features',
+    
+    // Bulk Operations Labels
+    'LBL_BULK_ACTIONS' => 'Bulk Actions',
+    'LBL_SELECT_ACTION' => 'Select Action',
+    'LBL_UPDATE_STATUS' => 'Update Status',
+    'LBL_DELETE_SELECTED' => 'Delete Selected',
+    'LBL_EXPORT_SELECTED' => 'Export Selected',
+    'LBL_NEW_STATUS' => 'New Status',
+    'LBL_STATUS_AVAILABLE' => 'Available',
+    'LBL_STATUS_SOLD' => 'Sold',
+    'LBL_STATUS_PENDING' => 'Pending',
+    'LBL_STATUS_SERVICE' => 'Service',
+    'LBL_EXECUTE' => 'Execute',
+    'LBL_CANCEL' => 'Cancel',
+    
+    // VIN Decoder Labels
+    'LBL_VIN_DECODER' => 'VIN Decoder',
+    'LBL_DECODE_VIN' => 'Decode VIN',
+    'LBL_DECODED_INFORMATION' => 'Decoded Information',
+    'LBL_APPLY_DATA' => 'Apply Data',
+    
+    // Enhanced List View Labels
+    'LBL_AVAILABLE_VEHICLES' => 'Available Vehicles',
+    'LBL_NEW_VEHICLES' => 'New Vehicles',
+    'LBL_AGING_INVENTORY' => 'Aging Inventory',
+    'LBL_STALE_INVENTORY' => 'Stale Inventory',
+    
+    // Action Labels
+    'LBL_MARK_SOLD' => 'Mark as Sold',
+    'LBL_UPDATE_PRICING' => 'Update Pricing',
+    'LBL_DECODE_VIN_ACTION' => 'Decode VIN',
+    'LBL_PRINT_STICKER' => 'Print Window Sticker',
+    'LBL_GENERATE_QR' => 'Generate QR Code',
+    'LBL_SHARE_VEHICLE' => 'Share Vehicle',
 );
 
 // Dropdown option lists for vehicle-specific enums
