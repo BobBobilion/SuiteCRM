@@ -109,6 +109,7 @@ $app_list_strings = array(
         'OAuthTokens' => 'OAuth Tokens',
         'OAuth2Clients' => 'OAuth Clients',
         'OAuth2Tokens' => 'OAuth Tokens',
+        'DM_FIDeals' => 'F&I Deal Center',
     ),
 
     'moduleListSingular' => array(
@@ -140,6 +141,7 @@ $app_list_strings = array(
         'Sync' => 'Sync',
         'Users' => 'User',
         'SugarFavorites' => 'SuiteCRM Favorites',
+        'DM_FIDeals' => 'F&I Deal',
 
     ),
 

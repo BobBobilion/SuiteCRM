@@ -85,6 +85,7 @@ $moduleList[] = 'ResourceCalendar';
 $moduleList[] = 'AOBH_BusinessHours';
 
 $moduleList[] = 'Spots';
+$moduleList[] = 'DM_FIDeals';
 
 // this list defines all of the module names and bean names in the app
 // to create a new module's bean class, add the bean definition here
@@ -153,6 +154,7 @@ $beanList['Employees'] = 'Employee';
 
 $beanList['Spots'] = 'Spots';
 $beanList['AOBH_BusinessHours'] = 'AOBH_BusinessHours';
+$beanList['DM_FIDeals'] = 'DM_FIDeals';
 
 // this list defines all of the files that contain the SugarBean class definitions from $beanList
 // to create a new module's bean class, add the file definition here
@@ -222,6 +224,7 @@ $beanFiles['Configurator'] = 'modules/Configurator/Configurator.php';
 
 $beanFiles['Spots'] = 'modules/Spots/Spots.php';
 $beanFiles['AOBH_BusinessHours'] = 'modules/AOBH_BusinessHours/AOBH_BusinessHours.php';
+$beanFiles['DM_FIDeals'] = 'modules/DM_FIDeals/DM_FIDeals.php';
 
 
 // added these lists for security settings for tabs
