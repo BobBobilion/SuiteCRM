@@ -3728,6 +3728,33 @@ $app_list_strings['search_controllers'] = [
     'UnifiedSearch' => 'Global Unified Search (legacy)'
 ];
 
+// F&I Deal Center Dropdown Lists
+$app_list_strings['fi_finance_method_list'] = array(
+    'Cash' => 'Cash',
+    'Finance' => 'Finance',
+    'Lease' => 'Lease',
+);
+
+$app_list_strings['fi_deal_status_list'] = array(
+    'Draft' => 'Draft',
+    'Submitted' => 'Submitted',
+    'Approved' => 'Approved',
+    'Funded' => 'Funded',
+    'Complete' => 'Complete',
+    'Cancelled' => 'Cancelled',
+);
+
+$app_list_strings['fi_loan_terms_list'] = array(
+    '12' => '12 months (1 year)',
+    '24' => '24 months (2 years)',
+    '36' => '36 months (3 years)',
+    '48' => '48 months (4 years)',
+    '60' => '60 months (5 years)',
+    '72' => '72 months (6 years)',
+    '84' => '84 months (7 years)',
+    '96' => '96 months (8 years)',
+);
+
 
 $app_strings['LBL_DEFAULT_API_ERROR_TITLE'] = 'JSON API Error';
 $app_strings['LBL_DEFAULT_API_ERROR_DETAIL'] = 'JSON API Error occurred.';

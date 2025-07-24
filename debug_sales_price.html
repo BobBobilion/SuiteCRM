@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>F&I Sales Price Debug Test</title>
+    <style>
+        .error {
+            border: 2px solid #dc3545 !important;
+        }
+        .field-error {
+            color: #dc3545;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .debug-output {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+            border: 1px solid #dee2e6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>F&I Deal Center - Sales Price Debug Test</h1>
+        
+        <div class="form-group">
+            <label for="sales_price">Sales Price:</label>
+            <input type="text" id="sales_price" placeholder="Enter sales price (e.g., 25000)">
+        </div>
+        
+        <div class="form-group">
+            <label for="government_fees">Government Fees:</label>
+            <input type="text" id="government_fees" placeholder="Enter government fees">
+        </div>
+        
+        <div class="debug-output">
+            <h3>Debug Information:</h3>
+            <div id="debug-info">
+                Type in the sales price field and then click elsewhere to see debug information...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simplified version of the F&I validation logic for testing
+        const DebugFI = {
+            config: {
+                maxInterestRate: 29.99,
+                minLoanTerm: 12,
+                maxLoanTerm: 96
+            },
+            
+            getFieldValue: function(fieldName) {
+                const field = document.getElementById(fieldName);
+                if (!field) {
+                    console.log('F&I Deal Center: Field not found:', fieldName);
+                    return 0;
+                }
+                
+                let value = field.value;
+                
+                if (value === null || value === undefined) {
+                    return 0;
+                }
+                
+                if (typeof value === 'string') {
+                    const originalValue = value;
+                    value = value.replace(/[$,\s%]/g, '').trim();
+                    
+                    if (value === '' || value === '.' || value === '-') {
+                        return 0;
+                    }
+                }
+                
+                const numValue = parseFloat(value);
+                const result = isNaN(numValue) ? 0 : numValue;
+                
+                return result;
+            },
+            
+            validateField: function(field) {
+                const value = this.getFieldValue(field.id);
+                let isValid = true;
+                let errorMessage = '';
+                
+                // Update debug display
+                document.getElementById('debug-info').innerHTML = `
+                    <strong>Field ID:</strong> ${field.id}<br>
+                    <strong>Raw Field Value:</strong> "${field.value}"<br>
+                    <strong>Parsed Numeric Value:</strong> ${value}<br>
+                    <strong>Value Type:</strong> ${typeof value}<br>
+                    <strong>Is Valid Number:</strong> ${!isNaN(value)}<br>
+                    <strong>Is Greater Than Zero:</strong> ${value > 0}<br>
+                `;
+                
+                switch (field.id) {
+                    case 'sales_price':
+                        if (value <= 0) {
+                            isValid = false;
+                            errorMessage = 'Sales price must be greater than zero';
+                        }
+                        break;
+                }
+                
+                // Update debug display with validation result
+                document.getElementById('debug-info').innerHTML += `
+                    <strong>Validation Result:</strong> ${isValid ? 'PASS ✅' : 'FAIL ❌'}<br>
+                    <strong>Error Message:</strong> ${errorMessage || 'None'}<br>
+                `;
+                
+                if (isValid) {
+                    field.classList.remove('error');
+                    field.style.borderColor = '';
+                    this.clearFieldError(field);
+                } else {
+                    field.classList.add('error');
+                    field.style.borderColor = '#dc3545';
+                    this.showFieldError(field, errorMessage);
+                }
+                
+                return isValid;
+            },
+            
+            showFieldError: function(field, message) {
+                const existingError = field.parentNode.querySelector('.field-error');
+                if (existingError) {
+                    existingError.remove();
+                }
+                
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'field-error';
+                errorDiv.innerHTML = message;
+                field.parentNode.appendChild(errorDiv);
+            },
+            
+            clearFieldError: function(field) {
+                const existingError = field.parentNode.querySelector('.field-error');
+                if (existingError) {
+                    existingError.remove();
+                }
+            }
+        };
+        
+        // Bind events
+        document.getElementById('sales_price').addEventListener('blur', function() {
+            DebugFI.validateField(this);
+        });
+        
+        document.getElementById('government_fees').addEventListener('blur', function() {
+            DebugFI.validateField(this);
+        });
+    </script>
+</body>
+</html> 

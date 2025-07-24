@@ -502,4 +502,405 @@ class DM_FIDeals extends Basic
         
         return $scenarios;
     }
+    
+    /**
+     * Calculate state and local taxes based on customer location
+     * 
+     * @param string $state Customer's state
+     * @param float $taxableAmount Amount subject to tax
+     * @return array Tax breakdown
+     */
+    public function calculateTaxes($state = null, $taxableAmount = null)
+    {
+        $state = $state ?: $this->customer_state ?: 'DEFAULT';
+        $taxableAmount = $taxableAmount ?: max(0, ($this->sales_price ?: 0) - ($this->trade_allowance ?: 0));
+        
+        // Tax rates by state (should be configurable via Admin)
+        $taxRates = array(
+            'CA' => array('state' => 7.25, 'avgLocal' => 3.33),
+            'TX' => array('state' => 6.25, 'avgLocal' => 2.00),
+            'FL' => array('state' => 6.00, 'avgLocal' => 1.05),
+            'NY' => array('state' => 4.00, 'avgLocal' => 4.49),
+            'IL' => array('state' => 6.25, 'avgLocal' => 2.55),
+            'PA' => array('state' => 6.00, 'avgLocal' => 0.34),
+            'OH' => array('state' => 5.75, 'avgLocal' => 2.25),
+            'GA' => array('state' => 4.00, 'avgLocal' => 3.29),
+            'NC' => array('state' => 4.75, 'avgLocal' => 2.22),
+            'MI' => array('state' => 6.00, 'avgLocal' => 0.00),
+            'DEFAULT' => array('state' => 6.00, 'avgLocal' => 2.50)
+        );
+        
+        $rates = $taxRates[$state] ?: $taxRates['DEFAULT'];
+        $stateTaxRate = $rates['state'] / 100;
+        $localTaxRate = $rates['avgLocal'] / 100;
+        $totalTaxRate = $stateTaxRate + $localTaxRate;
+        
+        $stateTax = $taxableAmount * $stateTaxRate;
+        $localTax = $taxableAmount * $localTaxRate;
+        $totalTax = $taxableAmount * $totalTaxRate;
+        
+        $GLOBALS['log']->debug("DM_FIDeals: Calculated taxes for $state - Total: $totalTax");
+        
+        return array(
+            'state_tax' => $stateTax,
+            'local_tax' => $localTax,
+            'total_tax' => $totalTax,
+            'state_rate' => $stateTaxRate,
+            'local_rate' => $localTaxRate,
+            'total_rate' => $totalTaxRate,
+            'taxable_amount' => $taxableAmount
+        );
+    }
+    
+    /**
+     * Calculate state-specific fees (documentation, title, license, etc.)
+     * 
+     * @param string $state Customer's state
+     * @return array Fee breakdown
+     */
+    public function calculateStateFees($state = null)
+    {
+        $state = $state ?: $this->customer_state ?: 'DEFAULT';
+        
+        // Fee schedules by state (should be configurable via Admin)
+        $feeSchedules = array(
+            'CA' => array(
+                'doc_fee' => 85.00,
+                'title_fee' => 23.00,
+                'license_fee' => 46.00,
+                'smog_fee' => 8.25,
+                'other_fees' => 20.00
+            ),
+            'TX' => array(
+                'doc_fee' => 150.00,
+                'title_fee' => 33.00,
+                'license_fee' => 51.75,
+                'inspection_fee' => 7.00,
+                'other_fees' => 25.00
+            ),
+            'FL' => array(
+                'doc_fee' => 995.00,
+                'title_fee' => 77.25,
+                'license_fee' => 225.00,
+                'other_fees' => 50.00
+            ),
+            'DEFAULT' => array(
+                'doc_fee' => 300.00,
+                'title_fee' => 50.00,
+                'license_fee' => 100.00,
+                'other_fees' => 25.00
+            )
+        );
+        
+        $fees = $feeSchedules[$state] ?: $feeSchedules['DEFAULT'];
+        $totalFees = array_sum($fees);
+        
+        $GLOBALS['log']->debug("DM_FIDeals: Calculated state fees for $state - Total: $totalFees");
+        
+        return array_merge($fees, array('total_fees' => $totalFees));
+    }
+    
+    /**
+     * Calculate lease payment using standard lease formula
+     * 
+     * @param float $vehiclePrice MSRP or selling price
+     * @param float $residualPercent Residual value as percentage
+     * @param float $moneyFactor Lease rate (equivalent to interest rate / 2400)
+     * @param int $termMonths Lease term in months
+     * @param float $downPayment Cash down payment
+     * @return array Lease calculation breakdown
+     */
+    public function calculateLeasePayment($vehiclePrice = null, $residualPercent = null, $moneyFactor = null, $termMonths = null, $downPayment = null)
+    {
+        $vehiclePrice = $vehiclePrice ?: ($this->sales_price ?: 0);
+        $residualPercent = $residualPercent ?: ($this->residual_percent ?: 55); // Default 55%
+        $moneyFactor = $moneyFactor ?: ($this->money_factor ?: 0.0025); // Default money factor
+        $termMonths = $termMonths ?: ($this->term_months ?: 36); // Default 36 months
+        $downPayment = $downPayment ?: ($this->down_payment ?: 0);
+        
+        if ($vehiclePrice <= 0 || $termMonths <= 0) {
+            return array(
+                'monthly_payment' => 0,
+                'depreciation_payment' => 0,
+                'finance_payment' => 0,
+                'residual_value' => 0,
+                'total_payments' => 0,
+                'cap_cost' => 0
+            );
+        }
+        
+        // Calculate lease components
+        $residualValue = $vehiclePrice * ($residualPercent / 100);
+        $capCost = $vehiclePrice - $downPayment; // Capitalized cost
+        $depreciationAmount = $capCost - $residualValue;
+        
+        // Monthly depreciation payment
+        $depreciationPayment = $depreciationAmount / $termMonths;
+        
+        // Monthly finance payment (rent charge)
+        $financePayment = ($capCost + $residualValue) * $moneyFactor;
+        
+        // Total monthly payment
+        $monthlyPayment = $depreciationPayment + $financePayment;
+        $totalPayments = $monthlyPayment * $termMonths + $downPayment;
+        
+        $GLOBALS['log']->debug("DM_FIDeals: Calculated lease payment - Monthly: $monthlyPayment");
+        
+        return array(
+            'monthly_payment' => $monthlyPayment,
+            'depreciation_payment' => $depreciationPayment,
+            'finance_payment' => $financePayment,
+            'residual_value' => $residualValue,
+            'total_payments' => $totalPayments,
+            'cap_cost' => $capCost,
+            'depreciation_amount' => $depreciationAmount
+        );
+    }
+    
+    /**
+     * Generate amortization schedule for a loan
+     * 
+     * @param float $principal Loan amount
+     * @param float $annualRate Annual interest rate (as percentage)
+     * @param int $termMonths Loan term in months
+     * @return array Monthly payment schedule
+     */
+    public function generateAmortizationSchedule($principal = null, $annualRate = null, $termMonths = null)
+    {
+        $principal = $principal ?: ($this->amount_financed ?: 0);
+        $annualRate = $annualRate ?: ($this->interest_rate ?: 0);
+        $termMonths = $termMonths ?: ($this->term_months ?: 60);
+        
+        if ($principal <= 0 || $termMonths <= 0) {
+            return array();
+        }
+        
+        $monthlyRate = ($annualRate / 100) / 12;
+        $schedule = array();
+        $balance = $principal;
+        
+        // Calculate monthly payment
+        if ($monthlyRate > 0) {
+            $monthlyPayment = $principal * ($monthlyRate * pow(1 + $monthlyRate, $termMonths)) / (pow(1 + $monthlyRate, $termMonths) - 1);
+        } else {
+            $monthlyPayment = $principal / $termMonths;
+        }
+        
+        for ($month = 1; $month <= $termMonths; $month++) {
+            $interestPayment = $balance * $monthlyRate;
+            $principalPayment = $monthlyPayment - $interestPayment;
+            $balance -= $principalPayment;
+            
+            // Ensure balance doesn't go negative on final payment
+            if ($month == $termMonths && $balance < 0) {
+                $principalPayment += $balance;
+                $balance = 0;
+            }
+            
+            $schedule[] = array(
+                'payment_number' => $month,
+                'payment_amount' => $monthlyPayment,
+                'principal_payment' => $principalPayment,
+                'interest_payment' => $interestPayment,
+                'remaining_balance' => max(0, $balance)
+            );
+        }
+        
+        $GLOBALS['log']->debug("DM_FIDeals: Generated amortization schedule for $termMonths months");
+        
+        return $schedule;
+    }
+    
+    /**
+     * Calculate balloon payment option
+     * 
+     * @param float $balloonPercent Percentage of principal due at end
+     * @param int $balloonTerm Term before balloon payment
+     * @return array Balloon payment calculation
+     */
+    public function calculateBalloonPayment($balloonPercent = null, $balloonTerm = null)
+    {
+        $principal = $this->amount_financed ?: 0;
+        $annualRate = $this->interest_rate ?: 0;
+        $balloonPercent = $balloonPercent ?: 25; // Default 25% balloon
+        $balloonTerm = $balloonTerm ?: ($this->term_months ?: 60);
+        
+        if ($principal <= 0 || $balloonTerm <= 0) {
+            return array(
+                'monthly_payment' => 0,
+                'balloon_amount' => 0,
+                'total_interest' => 0,
+                'total_payments' => 0
+            );
+        }
+        
+        $balloonAmount = $principal * ($balloonPercent / 100);
+        $financedAmount = $principal - $balloonAmount;
+        $monthlyRate = ($annualRate / 100) / 12;
+        
+        // Calculate monthly payment for financed portion
+        if ($monthlyRate > 0) {
+            $monthlyPayment = $financedAmount * ($monthlyRate * pow(1 + $monthlyRate, $balloonTerm)) / (pow(1 + $monthlyRate, $balloonTerm) - 1);
+        } else {
+            $monthlyPayment = $financedAmount / $balloonTerm;
+        }
+        
+        $totalInterest = ($monthlyPayment * $balloonTerm) - $financedAmount;
+        $totalPayments = ($monthlyPayment * $balloonTerm) + $balloonAmount;
+        
+        $GLOBALS['log']->debug("DM_FIDeals: Calculated balloon payment - Monthly: $monthlyPayment, Balloon: $balloonAmount");
+        
+        return array(
+            'monthly_payment' => $monthlyPayment,
+            'balloon_amount' => $balloonAmount,
+            'financed_amount' => $financedAmount,
+            'total_interest' => $totalInterest,
+            'total_payments' => $totalPayments
+        );
+    }
+    
+    /**
+     * Calculate comprehensive product commission breakdown
+     * 
+     * @return array Commission details for all F&I products
+     */
+    public function calculateProductCommissions()
+    {
+        // Commission rates (should be configurable via Admin)
+        $commissionRates = array(
+            'warranty' => 0.25,      // 25% commission on extended warranty
+            'gap' => 0.50,           // 50% commission on GAP insurance
+            'etch' => 0.80,          // 80% commission on theft protection
+            'maintenance' => 0.30,   // 30% commission on maintenance plans
+            'life_disability' => 0.40, // 40% commission on credit life/disability
+            'other_products' => 0.40  // 40% commission on other products
+        );
+        
+        $warrantyCommission = ($this->warranty_total ?: 0) * $commissionRates['warranty'];
+        $gapCommission = ($this->gap_amount ?: 0) * $commissionRates['gap'];
+        $etchCommission = ($this->etch_amount ?: 0) * $commissionRates['etch'];
+        $maintenanceCommission = ($this->maintenance_amount ?: 0) * $commissionRates['maintenance'];
+        $otherCommission = ($this->other_products_total ?: 0) * $commissionRates['other_products'];
+        
+        $totalProductCommission = $warrantyCommission + $gapCommission + $etchCommission + 
+                                 $maintenanceCommission + $otherCommission;
+        
+        $GLOBALS['log']->debug("DM_FIDeals: Calculated product commissions - Total: $totalProductCommission");
+        
+        return array(
+            'warranty_commission' => $warrantyCommission,
+            'gap_commission' => $gapCommission,
+            'etch_commission' => $etchCommission,
+            'maintenance_commission' => $maintenanceCommission,
+            'other_commission' => $otherCommission,
+            'total_product_commission' => $totalProductCommission,
+            'commission_rates' => $commissionRates
+        );
+    }
+    
+    /**
+     * Calculate cash vs finance comparison
+     * 
+     * @param float $cashPrice Alternative cash price
+     * @return array Comparison analysis
+     */
+    public function calculateCashVsFinanceComparison($cashPrice = null)
+    {
+        $cashPrice = $cashPrice ?: (($this->sales_price ?: 0) * 0.95); // Default 5% cash discount
+        $financePrice = $this->sales_price ?: 0;
+        $totalOfPayments = $this->total_of_payments ?: 0;
+        $downPayment = $this->down_payment ?: 0;
+        
+        // Calculate cash scenario
+        $cashTotal = $cashPrice + ($this->government_fees ?: 0) + ($this->dealer_fees ?: 0);
+        $cashSavings = $totalOfPayments - $cashTotal;
+        
+        // Calculate finance scenario
+        $financeTotal = $totalOfPayments + $downPayment;
+        $monthlyPayment = $this->monthly_payment ?: 0;
+        
+        // Investment opportunity calculation (what if cash was invested instead)
+        $assumedReturnRate = 0.07; // 7% annual return
+        $termYears = ($this->term_months ?: 60) / 12;
+        $investmentValue = $cashTotal * pow(1 + $assumedReturnRate, $termYears);
+        $opportunityCost = $investmentValue - $cashTotal;
+        
+        $GLOBALS['log']->debug("DM_FIDeals: Calculated cash vs finance comparison");
+        
+        return array(
+            'cash_price' => $cashPrice,
+            'cash_total' => $cashTotal,
+            'finance_total' => $financeTotal,
+            'cash_savings' => $cashSavings,
+            'monthly_payment' => $monthlyPayment,
+            'opportunity_cost' => $opportunityCost,
+            'investment_value' => $investmentValue,
+            'net_advantage_cash' => $cashSavings - $opportunityCost,
+            'break_even_rate' => ($totalOfPayments - $cashTotal) / $cashTotal / $termYears
+        );
+    }
+    
+    /**
+     * Validate deal data for completeness and accuracy
+     * 
+     * @return array Validation results
+     */
+    public function validateDealData()
+    {
+        $errors = array();
+        $warnings = array();
+        
+        // Required field validation
+        if (empty($this->sales_price) || $this->sales_price <= 0) {
+            $errors[] = "Sales price is required and must be greater than zero";
+        }
+        
+        if (empty($this->customer_id)) {
+            $errors[] = "Customer must be selected";
+        }
+        
+        if (empty($this->vehicle_id)) {
+            $errors[] = "Vehicle must be selected";
+        }
+        
+        // Finance method specific validation
+        if ($this->finance_method === 'Finance') {
+            if (empty($this->term_months) || $this->term_months < 12 || $this->term_months > 96) {
+                $errors[] = "Loan term must be between 12 and 96 months";
+            }
+            
+            if ($this->interest_rate < 0 || $this->interest_rate > 29.99) {
+                $errors[] = "Interest rate must be between 0% and 29.99%";
+            }
+            
+            if (($this->amount_financed ?: 0) <= 0) {
+                $warnings[] = "Amount financed should be greater than zero for financed deals";
+            }
+        }
+        
+        // Business rule validation
+        if (($this->trade_allowance ?: 0) > ($this->sales_price ?: 0)) {
+            $warnings[] = "Trade allowance exceeds sales price";
+        }
+        
+        if (($this->down_payment ?: 0) > ($this->sales_price ?: 0)) {
+            $warnings[] = "Down payment exceeds sales price";
+        }
+        
+        // Profitability warnings
+        $totalGross = $this->total_gross ?: 0;
+        if ($totalGross < 1000) {
+            $warnings[] = "Total gross profit is below recommended minimum ($1,000)";
+        }
+        
+        $GLOBALS['log']->debug("DM_FIDeals: Validation completed - " . count($errors) . " errors, " . count($warnings) . " warnings");
+        
+        return array(
+            'is_valid' => empty($errors),
+            'errors' => $errors,
+            'warnings' => $warnings,
+            'error_count' => count($errors),
+            'warning_count' => count($warnings)
+        );
+    }
 } 
