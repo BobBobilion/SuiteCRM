@@ -322,6 +322,10 @@ $mod_strings = array(
     'LBL_PRINT_STICKER' => 'Print Window Sticker',
     'LBL_GENERATE_QR' => 'Generate QR Code',
     'LBL_SHARE_VEHICLE' => 'Share Vehicle',
+    
+    // Edit View Labels
+    'LBL_EDIT_VEHICLE' => 'Edit Vehicle',
+    'LBL_ADD_VEHICLE' => 'Add New Vehicle',
 );
 
 // Dropdown option lists for vehicle-specific enums

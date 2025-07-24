@@ -23,6 +23,7 @@ class DM_VehiclesInventoryController extends SugarController
      * List of valid actions this controller can handle
      */
     protected $action_remap = array(
+        'index' => 'listview',
         'decodevin' => 'decodeVIN',
         'uploadphoto' => 'uploadPhoto',
         'deletephoto' => 'deletePhoto',
@@ -32,6 +33,21 @@ class DM_VehiclesInventoryController extends SugarController
         'featuresave' => 'saveFeatures',
         'duplicatecheck' => 'checkDuplicateVIN',
     );
+
+    /**
+     * Handle the index action by redirecting to ListView
+     */
+    public function action_index()
+    {
+        $GLOBALS['log']->debug("DM_VehiclesInventoryController: Index action called, redirecting to ListView");
+        
+        // Set the action to listview
+        $this->action = 'listview';
+        
+        // Load the list view
+        $this->loadBean();
+        $this->view = 'list';
+    }
 
     /**
      * Pre-action setup and validation

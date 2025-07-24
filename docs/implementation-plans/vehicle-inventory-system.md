@@ -89,7 +89,7 @@ The Vehicle Inventory System is the foundation module for the car dealership CRM
 - [x] Create enhanced DetailView
   - [x] Photo gallery component
   - [x] Features display grid
-  - [ ] Pricing history timeline
+  - [x] Pricing history timeline
   - [x] Action buttons (Print window sticker, etc.)
 - [x] Build advanced EditView
   - [x] VIN decoder integration
