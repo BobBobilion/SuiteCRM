@@ -256,6 +256,38 @@ $mod_strings = array(
     'LBL_WEBSITE_SYNC' => 'Website Sync',
     'LBL_THIRD_PARTY_LISTINGS' => 'Third Party Listings',
     'LBL_API_INTEGRATION' => 'API Integration',
+    
+    // Photo Gallery Labels
+    'LBL_VEHICLE_PHOTOS' => 'Vehicle Photos',
+    'LBL_ADD_PHOTOS' => 'Add Photos',
+    'LBL_ADD_FIRST_PHOTO' => 'Add First Photo',
+    'LBL_NO_PHOTOS_AVAILABLE' => 'No photos available for this vehicle.',
+    'LBL_VEHICLE_PHOTO' => 'Vehicle Photo',
+    'LBL_UPLOAD_PHOTOS' => 'Upload Photos',
+    'LBL_DRAG_DROP_PHOTOS' => 'Drag and drop photos here',
+    'LBL_OR_CLICK_TO_SELECT' => 'or click to select files',
+    
+    // Features Labels
+    'LBL_VEHICLE_FEATURES' => 'Vehicle Features',
+    'LBL_MANAGE_FEATURES' => 'Manage Features',
+    'LBL_NO_FEATURES_AVAILABLE' => 'No features selected for this vehicle.',
+    'LBL_ADD_FEATURES' => 'Add Features',
+    'LBL_MANAGE_VEHICLE_FEATURES' => 'Manage Vehicle Features',
+    'LBL_SAFETY_FEATURES' => 'Safety',
+    'LBL_COMFORT_FEATURES' => 'Comfort',
+    'LBL_TECHNOLOGY_FEATURES' => 'Technology',
+    'LBL_PERFORMANCE_FEATURES' => 'Performance',
+    'LBL_CUSTOM_FEATURES' => 'Custom',
+    'LBL_TOTAL_FEATURES' => 'Total Features',
+    'LBL_CATEGORIES' => 'Categories',
+    'LBL_KEY_FEATURES' => 'Key Features',
+    'LBL_FEATURE_NAME' => 'Feature Name',
+    'LBL_FEATURE_VALUE' => 'Feature Value',
+    'LBL_FEATURE_DESCRIPTION' => 'Feature Description',
+    'LBL_HIGHLIGHT_FEATURE' => 'Highlight as Key Feature',
+    'LBL_ADD_CUSTOM_FEATURE' => 'Add Custom Feature',
+    'LBL_SELECTED_FEATURES' => 'Selected Features',
+    'LBL_SAVE_FEATURES' => 'Save Features',
 );
 
 // Dropdown option lists for vehicle-specific enums
