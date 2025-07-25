@@ -710,6 +710,63 @@ $dictionary['DM_FIDeals'] = array(
             'duplicate_merge' => 'disabled',
         ),
         
+        // F&I Product Management (Phase 4)
+        'fi_product_details' => array(
+            'name' => 'fi_product_details',
+            'vname' => 'LBL_FI_PRODUCT_DETAILS',
+            'type' => 'text',
+            'comment' => 'JSON-encoded F&I product calculation details',
+            'audited' => true,
+            'massupdate' => false,
+            'studio' => false,
+        ),
+        
+        'fi_product_cost' => array(
+            'name' => 'fi_product_cost',
+            'vname' => 'LBL_FI_PRODUCT_COST',
+            'type' => 'currency',
+            'len' => '10,2',
+            'comment' => 'Total cost of F&I products sold',
+            'default' => '0.00',
+            'audited' => true,
+            'massupdate' => false,
+            'readonly' => true,
+        ),
+        
+        'fi_product_profit' => array(
+            'name' => 'fi_product_profit',
+            'vname' => 'LBL_FI_PRODUCT_PROFIT',
+            'type' => 'currency',
+            'len' => '10,2',
+            'comment' => 'Total profit from F&I products',
+            'default' => '0.00',
+            'audited' => true,
+            'massupdate' => false,
+            'readonly' => true,
+        ),
+        
+        'fi_product_commission' => array(
+            'name' => 'fi_product_commission',
+            'vname' => 'LBL_FI_PRODUCT_COMMISSION',
+            'type' => 'currency',
+            'len' => '10,2',
+            'comment' => 'Total commission on F&I products',
+            'default' => '0.00',
+            'audited' => true,
+            'massupdate' => false,
+            'readonly' => true,
+        ),
+        
+        'product_recommendations' => array(
+            'name' => 'product_recommendations',
+            'vname' => 'LBL_PRODUCT_RECOMMENDATIONS',
+            'type' => 'text',
+            'comment' => 'JSON-encoded product recommendations for this deal',
+            'audited' => false,
+            'massupdate' => false,
+            'studio' => false,
+        ),
+
         // Additional Information
         'notes' => array(
             'name' => 'notes',

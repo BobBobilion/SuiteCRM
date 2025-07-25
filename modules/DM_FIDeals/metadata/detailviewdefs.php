@@ -18,6 +18,25 @@ $viewdefs['DM_FIDeals']['DetailView'] = array(
                 'file' => 'modules/DM_FIDeals/js/DM_FIDeals.js',
             ),
         ),
+        'form' => array(
+            'buttons' => array(
+                'EDIT',
+                'DUPLICATE',
+                'DELETE',
+                array(
+                    'customCode' => '<input type="button" class="button" value="Submit to Lender" onclick="window.open(\'index.php?module=DM_FIDeals&action=submission&record={$fields.id.value}\', \'_blank\', \'width=900,height=700,scrollbars=yes\');" />',
+                ),
+                array(
+                    'customCode' => '<input type="button" class="button" value="Payment Calculator" onclick="SUGAR.DM_FIDeals.showPaymentScenarios();" />',
+                ),
+                array(
+                    'customCode' => '<input type="button" class="button" value="Approval Tracking" onclick="window.open(\'index.php?module=DM_FIDeals&action=approval_tracking&record={$fields.id.value}\', \'_blank\', \'width=1200,height=800,scrollbars=yes\');" />',
+                ),
+                array(
+                    'customCode' => '<input type="button" class="button" value="F&I Products" onclick="window.open(\'index.php?module=DM_FIDeals&action=product_selection&record={$fields.id.value}\', \'_blank\', \'width=1400,height=900,scrollbars=yes\');" />',
+                ),
+            )
+        ),
         'useTabs' => true,
         'tabDefs' => array(
             'LBL_PANEL_OVERVIEW' => array(
@@ -138,6 +157,14 @@ $viewdefs['DM_FIDeals']['DetailView'] = array(
             ),
             array(
                 'total_gross',
+                '',
+            ),
+            array(
+                'fi_product_profit',
+                'fi_product_commission',
+            ),
+            array(
+                'fi_product_cost',
                 '',
             ),
         ),

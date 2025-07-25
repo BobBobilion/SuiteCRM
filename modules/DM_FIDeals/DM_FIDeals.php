@@ -271,24 +271,8 @@ class DM_FIDeals extends Basic
     {
         $GLOBALS['log']->debug("DM_FIDeals: Calculating backend gross profit for deal: " . $this->id);
         
-        // Backend gross = Finance Reserve + Product Profits
-        $backend = (float)$this->finance_reserve;
-        
-        // Add estimated profit from F&I products (typically 20-40% markup)
-        // For now, using conservative 25% profit margin estimate
-        $productProfit = ((float)$this->warranty_total + 
-                         (float)$this->gap_amount + 
-                         (float)$this->etch_amount + 
-                         (float)$this->maintenance_amount + 
-                         (float)$this->other_products_total) * 0.25;
-        
-        $backend += $productProfit;
-        
-        $this->backend_gross = number_format($backend, 2, '.', '');
-        
-        $GLOBALS['log']->debug("DM_FIDeals: Backend gross calculated as: $" . $this->backend_gross);
-        
-        return $this->backend_gross;
+        // Use enhanced calculation if available, otherwise fall back to estimate
+        return $this->calculateBackendGrossEnhanced();
     }
     
     /**
@@ -321,10 +305,210 @@ class DM_FIDeals extends Basic
         $this->calculateAmountFinanced();
         $this->calculateMonthlyPayment();
         $this->calculateFinanceReserve();
+        $this->calculateFIProducts(); // New F&I product calculations
         $this->calculateBackendGross();
         $this->calculateTotalGross();
         
         $GLOBALS['log']->debug("DM_FIDeals: All calculations completed for deal: " . $this->id);
+    }
+    
+    /**
+     * Calculate F&I product totals and profits using the new product system
+     * 
+     * @return array F&I product calculation results
+     */
+    public function calculateFIProducts()
+    {
+        $GLOBALS['log']->debug("DM_FIDeals: Calculating F&I products for deal: " . $this->id);
+        
+        // Include the F&I Product class
+        require_once('modules/DM_FIDeals/FIProduct.php');
+        
+        // Get selected products from the deal fields
+        $selectedProducts = $this->getSelectedProducts();
+        
+        if (empty($selectedProducts)) {
+            $GLOBALS['log']->debug("DM_FIDeals: No F&I products selected");
+            return array();
+        }
+        
+        // Calculate product totals using actual pricing
+        $productCalculation = FIProduct::calculateDealProducts(
+            $selectedProducts,
+            (float)$this->sales_price,
+            (int)$this->term_months
+        );
+        
+        // Update deal fields with calculated totals
+        $this->updateProductTotals($productCalculation);
+        
+        $GLOBALS['log']->debug("DM_FIDeals: F&I product calculations completed - Total: $" . 
+                              number_format($productCalculation['total_price'], 2));
+        
+        return $productCalculation;
+    }
+    
+    /**
+     * Get selected F&I products from deal fields
+     * 
+     * @return array Selected products with tiers
+     */
+    private function getSelectedProducts()
+    {
+        $selectedProducts = array();
+        
+        // Map deal fields to product types and tiers
+        if (!empty($this->warranty_total) && (float)$this->warranty_total > 0) {
+            // Determine warranty tier based on amount
+            $warrantyAmount = (float)$this->warranty_total;
+            if ($warrantyAmount >= 3000) {
+                $tier = 'platinum';
+            } elseif ($warrantyAmount >= 2000) {
+                $tier = 'premium';
+            } else {
+                $tier = 'basic';
+            }
+            $selectedProducts['extended_warranty'] = $tier;
+        }
+        
+        if (!empty($this->gap_amount) && (float)$this->gap_amount > 0) {
+            $gapAmount = (float)$this->gap_amount;
+            $tier = $gapAmount >= 650 ? 'enhanced' : 'standard';
+            $selectedProducts['gap_insurance'] = $tier;
+        }
+        
+        if (!empty($this->etch_amount) && (float)$this->etch_amount > 0) {
+            $etchAmount = (float)$this->etch_amount;
+            $tier = $etchAmount >= 300 ? 'premium' : 'standard';
+            $selectedProducts['theft_protection'] = $tier;
+        }
+        
+        if (!empty($this->maintenance_amount) && (float)$this->maintenance_amount > 0) {
+            $maintenanceAmount = (float)$this->maintenance_amount;
+            if ($maintenanceAmount >= 2000) {
+                $tier = '5_year';
+            } elseif ($maintenanceAmount >= 1200) {
+                $tier = '3_year';
+            } else {
+                $tier = '2_year';
+            }
+            $selectedProducts['maintenance_package'] = $tier;
+        }
+        
+        // Check other_products_total for additional products
+        if (!empty($this->other_products_total) && (float)$this->other_products_total > 0) {
+            $otherAmount = (float)$this->other_products_total;
+            
+            // Estimate product types based on amount ranges
+            if ($otherAmount >= 400 && $otherAmount <= 600) {
+                $selectedProducts['paint_protection'] = 'basic';
+            } elseif ($otherAmount >= 450 && $otherAmount <= 630) {
+                $selectedProducts['tire_wheel'] = 'basic';
+            } elseif ($otherAmount >= 600 && $otherAmount <= 900) {
+                $selectedProducts['credit_life'] = 'life_disability';
+            }
+        }
+        
+        return $selectedProducts;
+    }
+    
+    /**
+     * Update deal product totals based on F&I product calculations
+     * 
+     * @param array $productCalculation Results from FIProduct::calculateDealProducts
+     */
+    private function updateProductTotals($productCalculation)
+    {
+        $GLOBALS['log']->debug("DM_FIDeals: Updating product totals from F&I calculations");
+        
+        // Store detailed product information for reference
+        $this->fi_product_details = json_encode($productCalculation);
+        
+        // Update individual product amounts if they were calculated
+        foreach ($productCalculation['products'] as $productType => $details) {
+            switch ($productType) {
+                case 'extended_warranty':
+                    $this->warranty_total = number_format($details['price'], 2, '.', '');
+                    break;
+                case 'gap_insurance':
+                    $this->gap_amount = number_format($details['price'], 2, '.', '');
+                    break;
+                case 'theft_protection':
+                    $this->etch_amount = number_format($details['price'], 2, '.', '');
+                    break;
+                case 'maintenance_package':
+                    $this->maintenance_amount = number_format($details['price'], 2, '.', '');
+                    break;
+                default:
+                    // Add to other_products_total
+                    $currentOther = (float)$this->other_products_total;
+                    $this->other_products_total = number_format($currentOther + $details['price'], 2, '.', '');
+                    break;
+            }
+        }
+        
+        // Store calculated profit information
+        $this->fi_product_cost = number_format($productCalculation['total_cost'], 2, '.', '');
+        $this->fi_product_profit = number_format($productCalculation['total_profit'], 2, '.', '');
+        $this->fi_product_commission = number_format($productCalculation['total_commission'], 2, '.', '');
+    }
+    
+    /**
+     * Get F&I product recommendations for this deal
+     * 
+     * @return array Product recommendations
+     */
+    public function getFIProductRecommendations()
+    {
+        $GLOBALS['log']->debug("DM_FIDeals: Getting F&I product recommendations for deal: " . $this->id);
+        
+        require_once('modules/DM_FIDeals/FIProduct.php');
+        
+        // Get customer credit score if available (default to 700 for MVP)
+        $creditScore = 700; // In full implementation, this would come from credit application
+        
+        $recommendations = FIProduct::getRecommendedProducts(
+            (float)$this->sales_price,
+            $this->finance_method,
+            (int)$this->term_months,
+            $creditScore
+        );
+        
+        $GLOBALS['log']->debug("DM_FIDeals: Generated " . count($recommendations) . " F&I product recommendations");
+        
+        return $recommendations;
+    }
+    
+    /**
+     * Calculate enhanced backend gross using actual F&I product profits
+     * 
+     * @return float The calculated backend gross profit
+     */
+    public function calculateBackendGrossEnhanced()
+    {
+        $GLOBALS['log']->debug("DM_FIDeals: Calculating enhanced backend gross profit for deal: " . $this->id);
+        
+        // Start with finance reserve
+        $backend = (float)$this->finance_reserve;
+        
+        // Add actual F&I product profit if available
+        if (!empty($this->fi_product_profit)) {
+            $backend += (float)$this->fi_product_profit;
+        } else {
+            // Fall back to estimated profit (original method)
+            $productProfit = ((float)$this->warranty_total + 
+                             (float)$this->gap_amount + 
+                             (float)$this->etch_amount + 
+                             (float)$this->maintenance_amount + 
+                             (float)$this->other_products_total) * 0.25;
+            $backend += $productProfit;
+        }
+        
+        $this->backend_gross = number_format($backend, 2, '.', '');
+        
+        $GLOBALS['log']->debug("DM_FIDeals: Enhanced backend gross calculated as: $" . $this->backend_gross);
+        
+        return $this->backend_gross;
     }
     
     /**

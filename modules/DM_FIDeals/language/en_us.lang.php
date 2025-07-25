@@ -124,6 +124,15 @@ $mod_strings = array(
     'LBL_SALESPERSON' => 'Salesperson',
     'LBL_LIST_SALESPERSON' => 'Salesperson',
     
+    // F&I Product Management (Phase 4)
+    'LBL_FI_PRODUCT_DETAILS' => 'Product Details',
+    'LBL_FI_PRODUCT_COST' => 'Product Cost',
+    'LBL_FI_PRODUCT_PROFIT' => 'Product Profit',
+    'LBL_FI_PRODUCT_COMMISSION' => 'Product Commission',
+    'LBL_PRODUCT_RECOMMENDATIONS' => 'Product Recommendations',
+    'LBL_LIST_FI_PRODUCT_PROFIT' => 'Product Profit',
+    'LBL_LIST_FI_PRODUCT_COMMISSION' => 'Commission',
+
     // Additional Information
     'LBL_NOTES' => 'Notes',
     'LBL_DEAL_NOTES' => 'Deal Notes',

@@ -125,6 +125,20 @@ $listViewDefs['DM_FIDeals'] = array(
         'default' => false,
         'currency_format' => true,
     ),
+    'FI_PRODUCT_PROFIT' => array(
+        'width' => '10%',
+        'label' => 'LBL_LIST_FI_PRODUCT_PROFIT',
+        'align' => 'right',
+        'default' => false,
+        'currency_format' => true,
+    ),
+    'FI_PRODUCT_COMMISSION' => array(
+        'width' => '10%',
+        'label' => 'LBL_LIST_FI_PRODUCT_COMMISSION',
+        'align' => 'right',
+        'default' => false,
+        'currency_format' => true,
+    ),
     'FRONTEND_GROSS' => array(
         'width' => '10%',
         'label' => 'LBL_FRONTEND_GROSS',
