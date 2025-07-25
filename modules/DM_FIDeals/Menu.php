@@ -50,10 +50,26 @@ if (ACLController::checkAccess('DM_FIDeals', 'list', true)) {
         'DM_FIDeals'
     );
     
-    // Add reports menu item
+    // Add F&I reports menu item
     $module_menu[] = array(
         "index.php?module=DM_FIDeals&action=reports",
-        $mod_strings['LBL_REPORTS'],
+        $mod_strings['LBL_FI_REPORTS'],
+        "DM_FIDeals",
+        'DM_FIDeals'
+    );
+    
+    // Add F&I dashboard menu item
+    $module_menu[] = array(
+        "index.php?module=DM_FIDeals&action=reports&report_type=dashboard",
+        $mod_strings['LBL_FI_DASHBOARD'],
+        "DM_FIDeals",
+        'DM_FIDeals'
+    );
+    
+    // Add F&I analytics menu item
+    $module_menu[] = array(
+        "index.php?module=DM_FIDeals&action=analytics",
+        $mod_strings['LBL_FI_ANALYTICS'],
         "DM_FIDeals",
         'DM_FIDeals'
     );
