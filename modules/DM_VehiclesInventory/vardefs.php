@@ -520,7 +520,7 @@ $dictionary['DM_VehiclesInventory'] = array(
         // Currency fields for multi-currency support
         'currency_id' => array(
             'name' => 'currency_id',
-            'type' => 'id',
+            'type' => 'currency_id',
             'dbType' => 'id',
             'vname' => 'LBL_CURRENCY',
             'len' => '36',

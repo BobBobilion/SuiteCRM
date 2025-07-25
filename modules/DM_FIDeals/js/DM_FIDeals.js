@@ -569,8 +569,18 @@ SUGAR.DM_FIDeals = {
      * Generate payment scenarios for different terms
      */
     generatePaymentScenarios: function(terms = [36, 48, 60, 72, 84]) {
-        const principal = this.getFieldValue('amount_financed');
-        const rate = this.getFieldValue('interest_rate') / 100;
+        let principal, rate;
+        
+        // Check if we have temporary scenario data (from standalone calculator)
+        if (this.tempScenarioData) {
+            principal = this.tempScenarioData.principal;
+            rate = this.tempScenarioData.rate / 100;
+        } else {
+            // Use form field values (from EditView)
+            principal = this.getFieldValue('amount_financed');
+            rate = this.getFieldValue('interest_rate') / 100;
+        }
+        
         const scenarios = [];
         
         terms.forEach(term => {
@@ -599,6 +609,12 @@ SUGAR.DM_FIDeals = {
         });
         
         this.displayPaymentScenarios(scenarios);
+        
+        // Clear temporary data if it was used
+        if (this.tempScenarioData) {
+            delete this.tempScenarioData;
+        }
+        
         return scenarios;
     },
 
@@ -606,24 +622,93 @@ SUGAR.DM_FIDeals = {
      * Display payment scenarios in a popup or panel
      */
     displayPaymentScenarios: function(scenarios) {
-        let html = '<h3>Payment Scenarios</h3><table class="table table-striped">';
-        html += '<thead><tr><th>Term</th><th>Monthly Payment</th><th>Total Payments</th><th>Total Interest</th></tr></thead><tbody>';
+        let html = '<table class="table table-striped table-hover">';
+        html += '<thead><tr><th>Term</th><th>Monthly Payment</th><th>Total Payments</th><th>Total Interest</th><th>Select</th></tr></thead><tbody>';
         
-        scenarios.forEach(scenario => {
-            html += `<tr>
-                <td>${scenario.term} months</td>
+        scenarios.forEach((scenario, index) => {
+            html += `<tr data-term="${scenario.term}" data-payment="${scenario.payment}">
+                <td><strong>${scenario.term} months</strong></td>
                 <td>${this.config.currencyFormatter.format(scenario.payment)}</td>
                 <td>${this.config.currencyFormatter.format(scenario.totalPayments)}</td>
                 <td>${this.config.currencyFormatter.format(scenario.totalInterest)}</td>
+                <td><input type="radio" name="scenario-select" value="${index}" ${index === 2 ? 'checked' : ''}></td>
             </tr>`;
         });
         
         html += '</tbody></table>';
+        html += '<p class="text-muted"><small><i class="fa fa-info-circle"></i> Click a row to select, then click "Apply Selected" to use these terms.</small></p>';
         
-        // Display in a modal or update a designated div
+        // Display in the modal
         const scenarioDiv = document.getElementById('payment-scenarios');
         if (scenarioDiv) {
             scenarioDiv.innerHTML = html;
+            
+            // Add click handlers for row selection
+            const rows = scenarioDiv.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                row.addEventListener('click', function() {
+                    rows.forEach(r => r.classList.remove('selected'));
+                    this.classList.add('selected');
+                    this.querySelector('input[type="radio"]').checked = true;
+                });
+            });
+            
+            // Show the modal
+            $('#payment-scenarios-modal').modal('show');
+        } else {
+            console.error('F&I Deal Center: payment-scenarios div not found');
+        }
+    },
+
+    /**
+     * Apply selected payment scenario to the deal
+     */
+    selectPaymentScenario: function() {
+        const selectedRow = document.querySelector('#payment-scenarios tr.selected');
+        if (!selectedRow) {
+            alert('Please select a payment scenario first.');
+            return;
+        }
+
+        const term = selectedRow.getAttribute('data-term');
+        const payment = selectedRow.getAttribute('data-payment');
+
+        // Update the form fields
+        this.setFieldValue('term_months', term);
+        this.setFieldValue('monthly_payment', payment);
+
+        // Recalculate other dependent fields
+        this.recalculateAll();
+
+        // Close the modal
+        $('#payment-scenarios-modal').modal('hide');
+
+        // Show success message
+        this.showMessage('Payment scenario applied successfully!', 'success');
+    },
+
+    /**
+     * Show payment scenarios (alias for DetailView button)
+     */
+    showPaymentScenarios: function() {
+        this.generatePaymentScenarios();
+    },
+
+    /**
+     * Show calculator help modal
+     */
+    showHelp: function() {
+        // Show help modal if it exists, or create a simple alert
+        const helpModal = document.getElementById('calculator-help-modal');
+        if (helpModal) {
+            $('#calculator-help-modal').modal('show');
+        } else {
+            alert('F&I Deal Center Calculator Help\n\n' +
+                  '• Enter vehicle price, down payment, and trade details\n' +
+                  '• Select financing terms and interest rate\n' +
+                  '• Click "Payment Scenarios" to compare different terms\n' +
+                  '• All calculations update in real-time\n' +
+                  '• Use "Recalculate" to refresh all fields');
         }
     },
 
@@ -832,6 +917,19 @@ document.addEventListener('DOMContentLoaded', function() {
         SUGAR.DM_FIDeals.init();
     }
 });
+
+// Global functions for template onclick handlers
+function selectPaymentScenario() {
+    if (SUGAR.DM_FIDeals && SUGAR.DM_FIDeals.selectPaymentScenario) {
+        SUGAR.DM_FIDeals.selectPaymentScenario();
+    }
+}
+
+function showCalculatorHelp() {
+    if (SUGAR.DM_FIDeals && SUGAR.DM_FIDeals.showHelp) {
+        SUGAR.DM_FIDeals.showHelp();
+    }
+}
 
 // Legacy support for EditView
 if (typeof EditView !== 'undefined') {

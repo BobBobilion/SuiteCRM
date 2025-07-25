@@ -147,6 +147,8 @@ class MysqlManager extends DBManager
         'url' => 'varchar',
         'encrypt' => 'varchar',
         'file' => 'varchar',
+        'phone' => 'varchar',
+        'email' => 'varchar',
         'decimal_tpl' => 'decimal(%d, %d)',
 
     );
