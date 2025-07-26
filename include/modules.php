@@ -86,6 +86,9 @@ $moduleList[] = 'AOBH_BusinessHours';
 
 $moduleList[] = 'Spots';
 $moduleList[] = 'DM_FIDeals';
+$moduleList[] = 'DM_TradeIns';
+$moduleList[] = 'DM_VehiclesInventory';
+$moduleList[] = 'AutoInventory';
 
 // this list defines all of the module names and bean names in the app
 // to create a new module's bean class, add the bean definition here
@@ -155,6 +158,9 @@ $beanList['Employees'] = 'Employee';
 $beanList['Spots'] = 'Spots';
 $beanList['AOBH_BusinessHours'] = 'AOBH_BusinessHours';
 $beanList['DM_FIDeals'] = 'DM_FIDeals';
+$beanList['DM_TradeIns'] = 'DM_TradeIns';
+$beanList['DM_VehiclesInventory'] = 'DM_VehiclesInventory';
+$beanList['AutoInventory'] = 'AutoInventory';
 
 // this list defines all of the files that contain the SugarBean class definitions from $beanList
 // to create a new module's bean class, add the file definition here
@@ -225,6 +231,9 @@ $beanFiles['Configurator'] = 'modules/Configurator/Configurator.php';
 $beanFiles['Spots'] = 'modules/Spots/Spots.php';
 $beanFiles['AOBH_BusinessHours'] = 'modules/AOBH_BusinessHours/AOBH_BusinessHours.php';
 $beanFiles['DM_FIDeals'] = 'modules/DM_FIDeals/DM_FIDeals.php';
+$beanFiles['DM_TradeIns'] = 'modules/DM_TradeIns/DM_TradeIns.php';
+$beanFiles['DM_VehiclesInventory'] = 'modules/DM_VehiclesInventory/DM_VehiclesInventory.php';
+$beanFiles['AutoInventory'] = 'modules/AutoInventory/AutoInventory.php';
 
 
 // added these lists for security settings for tabs

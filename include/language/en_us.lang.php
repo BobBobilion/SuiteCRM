@@ -110,6 +110,8 @@ $app_list_strings = array(
         'OAuth2Clients' => 'OAuth Clients',
         'OAuth2Tokens' => 'OAuth Tokens',
         'DM_FIDeals' => 'F&I Deal Center',
+            'DM_VehiclesInventory' => 'Vehicle Inventory',
+    'AutoInventory' => 'Auto Inventory',
     ),
 
     'moduleListSingular' => array(
@@ -142,6 +144,8 @@ $app_list_strings = array(
         'Users' => 'User',
         'SugarFavorites' => 'SuiteCRM Favorites',
         'DM_FIDeals' => 'F&I Deal',
+            'DM_VehiclesInventory' => 'Vehicle',
+    'AutoInventory' => 'Auto',
 
     ),
 
@@ -3821,5 +3825,68 @@ $app_strings['LBL_OPTIONAL_CONNECTION_STRING'] = 'Optional. Set to use a specifi
 $app_strings['LBL_OUTBOUND_ACCOUNT'] = 'Outbound Account';
 $app_strings['LBL_INBOUND_ACCOUNT'] = 'Inbound Account';
 $app_strings['LBL_SYSTEM_ACCOUNT'] = 'System Account';
+
+// AutoInventory Dropdown Lists
+$app_list_strings['auto_status_list'] = array(
+    'Available' => 'Available',
+    'Sold' => 'Sold',
+    'Pending' => 'Pending',
+    'Service' => 'In Service',
+    'Hold' => 'On Hold',
+    'Reserved' => 'Reserved',
+);
+
+$app_list_strings['auto_condition_list'] = array(
+    'New' => 'New',
+    'Used' => 'Used',
+    'Certified' => 'Certified Pre-Owned',
+    'Damaged' => 'Damaged',
+    'Salvage' => 'Salvage',
+);
+
+$app_list_strings['auto_body_type_list'] = array(
+    'Sedan' => 'Sedan',
+    'Coupe' => 'Coupe',
+    'Hatchback' => 'Hatchback',
+    'SUV' => 'SUV',
+    'Truck' => 'Truck',
+    'Van' => 'Van',
+    'Convertible' => 'Convertible',
+    'Wagon' => 'Wagon',
+    'Crossover' => 'Crossover',
+);
+
+$app_list_strings['auto_transmission_list'] = array(
+    'Automatic' => 'Automatic',
+    'Manual' => 'Manual',
+    'CVT' => 'CVT',
+    'Semi-Automatic' => 'Semi-Automatic',
+);
+
+$app_list_strings['auto_drive_type_list'] = array(
+    'FWD' => 'Front Wheel Drive',
+    'RWD' => 'Rear Wheel Drive',
+    'AWD' => 'All Wheel Drive',
+    '4WD' => '4 Wheel Drive',
+);
+
+$app_list_strings['auto_fuel_type_list'] = array(
+    'Gasoline' => 'Gasoline',
+    'Diesel' => 'Diesel',
+    'Hybrid' => 'Hybrid',
+    'Electric' => 'Electric',
+    'Flex Fuel' => 'Flex Fuel',
+    'CNG' => 'Compressed Natural Gas',
+);
+
+$app_list_strings['auto_acquisition_list'] = array(
+    'Trade-In' => 'Trade-In',
+    'Auction' => 'Auction',
+    'Purchase' => 'Direct Purchase',
+    'Dealer Exchange' => 'Dealer Exchange',
+    'Lease Return' => 'Lease Return',
+    'Manufacturer' => 'Manufacturer',
+    'Consignment' => 'Consignment',
+);
 $app_strings['LBL_FROM_SYSTEM'] = 'Send From System';
 $app_strings['LBL_SIGNATURE'] = 'Signature';
