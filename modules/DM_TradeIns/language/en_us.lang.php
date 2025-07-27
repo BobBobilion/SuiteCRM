@@ -20,6 +20,10 @@ $mod_strings = array(
     'LBL_SEARCH_FORM_TITLE' => 'Search Trade-Ins',
     'LBL_HISTORY_SUBPANEL_TITLE' => 'View History',
     
+    // === MENU LINKS ===
+    'LNK_NEW_RECORD' => 'Create Trade-In',
+    'LNK_LIST' => 'View Trade-Ins',
+    
     // === STANDARD SUGARBEAN FIELDS ===
     'LBL_ID' => 'ID',
     'LBL_NAME' => 'Name',

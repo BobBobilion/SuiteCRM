@@ -38,6 +38,9 @@ $viewdefs['DM_FIDeals']['DetailView'] = array(
                 array(
                     'customCode' => '<input type="button" class="button" value="F&I Reports" onclick="window.open(\'index.php?module=DM_FIDeals&action=reports\', \'_blank\', \'width=1600,height=1000,scrollbars=yes\');" />',
                 ),
+                array(
+                    'customCode' => '<input type="button" class="button" value="Generate Documents" onclick="window.open(\'index.php?module=DM_DealDocuments&action=EditView&deal_id={$fields.id.value}&customer_id={$fields.customer_id.value}\', \'_blank\', \'width=1200,height=800,scrollbars=yes\');" />',
+                ),
             )
         ),
         'useTabs' => true,

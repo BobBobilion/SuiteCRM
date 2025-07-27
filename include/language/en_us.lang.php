@@ -110,8 +110,14 @@ $app_list_strings = array(
         'OAuth2Clients' => 'OAuth Clients',
         'OAuth2Tokens' => 'OAuth Tokens',
         'DM_FIDeals' => 'F&I Deal Center',
-            'DM_VehiclesInventory' => 'Vehicle Inventory',
-    'AutoInventory' => 'Auto Inventory',
+        'DM_TradeIns' => 'Trade-In Manager',
+        'DM_VehiclesInventory' => 'Vehicle Inventory',
+        'AutoInventory' => 'Auto Inventory',
+        'DM_DealDocuments' => 'Deal Documentation Suite',
+        'DM_LeadAttribution' => 'Lead Attribution Center',
+        'DM_ServiceOrders' => 'Service Orders',
+        'DM_PartsInventory' => 'Parts Inventory',
+        'DM_ServiceHistory' => 'Service History',
     ),
 
     'moduleListSingular' => array(
@@ -144,8 +150,14 @@ $app_list_strings = array(
         'Users' => 'User',
         'SugarFavorites' => 'SuiteCRM Favorites',
         'DM_FIDeals' => 'F&I Deal',
-            'DM_VehiclesInventory' => 'Vehicle',
-    'AutoInventory' => 'Auto',
+        'DM_TradeIns' => 'Trade-In',
+        'DM_VehiclesInventory' => 'Vehicle',
+        'AutoInventory' => 'Auto',
+        'DM_DealDocuments' => 'Deal Document',
+        'DM_LeadAttribution' => 'Lead Attribution',
+        'DM_ServiceOrders' => 'Service Order',
+        'DM_PartsInventory' => 'Part',
+        'DM_ServiceHistory' => 'Service Record',
 
     ),
 

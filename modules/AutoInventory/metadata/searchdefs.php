@@ -3,13 +3,26 @@ $module_name = 'AutoInventory';
 $searchdefs [$module_name] = array(
     'layout' => array(
         'basic_search' => array(
-            'name',
-            'vin_number',
-            'stock_id',
-            'manufacturer',
-            'vehicle_model',
-            'model_year',
-            'inventory_status'
+            'name' => array(
+                'name' => 'name',
+                'default' => true,
+                'width' => '10%'
+            ),
+            'vin_number' => array(
+                'name' => 'vin_number',
+                'default' => true,
+                'width' => '10%'
+            ),
+            'stock_id' => array(
+                'name' => 'stock_id',
+                'default' => true,
+                'width' => '10%'
+            ),
+            'manufacturer' => array(
+                'name' => 'manufacturer',
+                'default' => true,
+                'width' => '10%'
+            )
         ),
         'advanced_search' => array(
             'name' => array(
