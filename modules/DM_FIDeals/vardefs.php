@@ -866,11 +866,6 @@ $dictionary['DM_FIDeals'] = array(
     // Define database indices for performance
     'indices' => array(
         array(
-            'name' => 'dm_fidealspk',
-            'type' => 'primary',
-            'fields' => array('id'),
-        ),
-        array(
             'name' => 'idx_dm_fideals_deal_number',
             'type' => 'unique',
             'fields' => array('deal_number', 'deleted'),

@@ -754,11 +754,6 @@ $dictionary['DM_TradeIns'] = array(
     // === INDICES ===
     'indices' => array(
         array(
-            'name' => 'dm_tradeins_pk',
-            'type' => 'primary',
-            'fields' => array('id')
-        ),
-        array(
             'name' => 'idx_dm_tradeins_customer',
             'type' => 'index',
             'fields' => array('customer_id')

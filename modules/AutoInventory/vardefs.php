@@ -401,11 +401,6 @@ $dictionary['AutoInventory'] = array(
     'unified_search' => true,
     'indices' => array(
         array(
-            'name' => 'auto_inventory_pk',
-            'type' => 'primary',
-            'fields' => array('id')
-        ),
-        array(
             'name' => 'idx_auto_inventory_vin',
             'type' => 'index',
             'fields' => array('vin_number')

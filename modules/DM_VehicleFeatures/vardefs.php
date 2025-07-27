@@ -310,11 +310,6 @@ $dictionary['DM_VehicleFeatures'] = array(
     
     'indices' => array(
         array(
-            'name' => 'dm_vehiclefeaturespk',
-            'type' => 'primary',
-            'fields' => array('id'),
-        ),
-        array(
             'name' => 'idx_dm_vehiclefeatures_name',
             'type' => 'index',
             'fields' => array('name'),
@@ -352,5 +347,5 @@ $dictionary['DM_VehicleFeatures'] = array(
     ),
 );
 
-VardefManager::createVardef('DM_VehicleFeatures', 'DM_VehicleFeatures', array('basic', 'assignable'));
+VardefManager::createVardef('DM_VehicleFeatures', 'DM_VehicleFeatures', array('basic', 'assignable', 'security_groups'));
 ?> 
