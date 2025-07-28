@@ -48,10 +48,13 @@ $viewdefs['DM_TradeIns']['EditView'] = array(
                 'newTab' => false,
                 'panelDefault' => 'expanded',
             ),
+            'LBL_PANEL_PHOTOS' => array(
+                'newTab' => true,
+                'panelDefault' => 'expanded',
+            ),
         ),
         'form' => array(
-            'headerTpl' => 'modules/DM_TradeIns/tpls/EditViewHeader.tpl',
-            'footerTpl' => 'modules/DM_TradeIns/tpls/EditViewFooter.tpl',
+            'enctype' => 'multipart/form-data',
         ),
     ),
     'panels' => array(
@@ -381,6 +384,19 @@ $viewdefs['DM_TradeIns']['EditView'] = array(
                         'readonly' => true,
                         'class' => 'readonly',
                     ),
+                ),
+            ),
+        ),
+        
+        'LBL_PANEL_PHOTOS' => array(
+            array(
+                array(
+                    'name' => 'vehicle_photos',
+                    'label' => 'LBL_VEHICLE_PHOTOS',
+                ),
+                array(
+                    'name' => 'photos_taken',
+                    'label' => 'LBL_PHOTOS_TAKEN',
                 ),
             ),
         ),

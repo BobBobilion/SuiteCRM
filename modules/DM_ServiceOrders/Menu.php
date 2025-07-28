@@ -35,4 +35,14 @@ if (ACLController::checkAccess('DM_ServiceOrders', 'import', true)) {
         'DM_ServiceOrders'
     );
 }
+
+// Service Summary Report
+if (ACLController::checkAccess('DM_ServiceOrders', 'list', true)) {
+    $module_menu[] = array(
+        "index.php?module=DM_ServiceOrders&action=service_summary_report",
+        "Service Summary Report",
+        "Reports",
+        'DM_ServiceOrders'
+    );
+}
 ?>

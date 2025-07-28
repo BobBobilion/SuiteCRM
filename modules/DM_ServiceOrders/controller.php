@@ -112,5 +112,13 @@ class DM_ServiceOrdersController extends SugarController
         echo json_encode($response);
         sugar_cleanup(true);
     }
+
+    /**
+     * Action for service summary report
+     */
+    public function action_service_summary_report()
+    {
+        $this->view = 'service_summary_report';
+    }
 }
 ?>

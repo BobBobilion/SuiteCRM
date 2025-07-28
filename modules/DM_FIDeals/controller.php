@@ -50,6 +50,162 @@ class DM_FIDealsController extends SugarController
     }
 
     /**
+     * Handle PDF download action
+     */
+    public function action_downloadPDF()
+    {
+        $GLOBALS['log']->debug("F&I Deal Center: PDF download action called");
+        
+        $recordId = $_REQUEST['record'] ?? '';
+        
+        if (empty($recordId)) {
+            echo "Error: No record ID provided for PDF generation.";
+            return;
+        }
+        
+        // Load the deal record
+        $deal = BeanFactory::retrieveBean('DM_FIDeals', $recordId);
+        
+        if (!$deal || empty($deal->id)) {
+            echo "Error: Deal record not found.";
+            return;
+        }
+        
+        // Generate PDF content
+        $this->generateDealWorksheetPDF($deal);
+    }
+    
+    /**
+     * Generate PDF worksheet for the deal
+     */
+    private function generateDealWorksheetPDF($deal)
+    {
+        // Set headers for PDF download
+        header('Content-Type: application/pdf');
+        header('Content-Disposition: attachment; filename="deal_worksheet_' . $deal->id . '.pdf"');
+        header('Cache-Control: private, max-age=0, must-revalidate');
+        header('Pragma: public');
+        
+        // Simple PDF content (you could integrate TCPDF or other PDF library here)
+        $html = $this->buildDealWorksheetHTML($deal);
+        
+        // For now, convert HTML to a simple text-based PDF
+        // In a real implementation, you'd use a proper PDF library
+        $this->outputSimplePDF($html, $deal);
+    }
+    
+    /**
+     * Build HTML content for the deal worksheet
+     */
+    private function buildDealWorksheetHTML($deal)
+    {
+        $html = '
+        <html>
+        <head>
+            <title>Deal Worksheet - ' . htmlspecialchars($deal->name ?? 'Deal') . '</title>
+            <style>
+                body { font-family: Arial, sans-serif; margin: 20px; }
+                .header { text-align: center; margin-bottom: 30px; }
+                .section { margin-bottom: 20px; }
+                .label { font-weight: bold; }
+                table { width: 100%; border-collapse: collapse; }
+                th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+                th { background-color: #f5f5f5; }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <h1>F&I Deal Worksheet</h1>
+                <h2>' . htmlspecialchars($deal->name ?? 'Deal') . '</h2>
+                <p>Generated: ' . date('Y-m-d H:i:s') . '</p>
+            </div>
+            
+            <div class="section">
+                <h3>Deal Information</h3>
+                <table>
+                    <tr><td class="label">Deal ID:</td><td>' . htmlspecialchars($deal->id) . '</td></tr>
+                    <tr><td class="label">Customer:</td><td>' . htmlspecialchars($deal->customer_name ?? 'N/A') . '</td></tr>
+                    <tr><td class="label">Vehicle:</td><td>' . htmlspecialchars($deal->vehicle_name ?? 'N/A') . '</td></tr>
+                    <tr><td class="label">Sales Price:</td><td>$' . number_format($deal->sales_price ?? 0, 2) . '</td></tr>
+                    <tr><td class="label">Trade Value:</td><td>$' . number_format($deal->trade_value ?? 0, 2) . '</td></tr>
+                    <tr><td class="label">Cash Down:</td><td>$' . number_format($deal->cash_down ?? 0, 2) . '</td></tr>
+                    <tr><td class="label">Amount Financed:</td><td>$' . number_format($deal->amount_financed ?? 0, 2) . '</td></tr>
+                </table>
+            </div>
+            
+            <div class="section">
+                <h3>Financing Details</h3>
+                <table>
+                    <tr><td class="label">Term (Months):</td><td>' . ($deal->term_months ?? 'N/A') . '</td></tr>
+                    <tr><td class="label">Interest Rate:</td><td>' . number_format($deal->interest_rate ?? 0, 3) . '%</td></tr>
+                    <tr><td class="label">Monthly Payment:</td><td>$' . number_format($deal->monthly_payment ?? 0, 2) . '</td></tr>
+                    <tr><td class="label">Finance Reserve:</td><td>$' . number_format($deal->finance_reserve ?? 0, 2) . '</td></tr>
+                </table>
+            </div>
+            
+            <div class="section">
+                <h3>F&I Products</h3>
+                <table>
+                    <tr><td class="label">Extended Warranty:</td><td>$' . number_format($deal->warranty_total ?? 0, 2) . '</td></tr>
+                    <tr><td class="label">GAP Insurance:</td><td>$' . number_format($deal->gap_amount ?? 0, 2) . '</td></tr>
+                    <tr><td class="label">Maintenance Plan:</td><td>$' . number_format($deal->maintenance_amount ?? 0, 2) . '</td></tr>
+                    <tr><td class="label">Etch Protection:</td><td>$' . number_format($deal->etch_amount ?? 0, 2) . '</td></tr>
+                </table>
+            </div>
+            
+            <div class="section">
+                <h3>Deal Summary</h3>
+                <table>
+                    <tr><td class="label">Frontend Gross:</td><td>$' . number_format($deal->frontend_gross ?? 0, 2) . '</td></tr>
+                    <tr><td class="label">Backend Gross:</td><td>$' . number_format($deal->backend_gross ?? 0, 2) . '</td></tr>
+                    <tr><td class="label">Total Gross:</td><td>$' . number_format($deal->total_gross ?? 0, 2) . '</td></tr>
+                    <tr><td class="label">Deal Status:</td><td>' . htmlspecialchars($deal->deal_status ?? 'Draft') . '</td></tr>
+                </table>
+            </div>
+        </body>
+        </html>';
+        
+        return $html;
+    }
+    
+    /**
+     * Output a simple PDF (basic implementation)
+     */
+    private function outputSimplePDF($html, $deal)
+    {
+        // For a basic implementation, we'll use wkhtmltopdf if available
+        // or fall back to HTML output with PDF headers
+        
+        $tempFile = tempnam(sys_get_temp_dir(), 'deal_worksheet_');
+        file_put_contents($tempFile . '.html', $html);
+        
+        // Try to use wkhtmltopdf if available
+        $wkhtmltopdf = 'wkhtmltopdf';
+        $pdfFile = $tempFile . '.pdf';
+        
+        $command = $wkhtmltopdf . ' ' . escapeshellarg($tempFile . '.html') . ' ' . escapeshellarg($pdfFile) . ' 2>&1';
+        $output = shell_exec($command);
+        
+        if (file_exists($pdfFile) && filesize($pdfFile) > 0) {
+            // Success - output the PDF
+            readfile($pdfFile);
+            unlink($pdfFile);
+        } else {
+            // Fallback - output HTML with PDF content type
+            header('Content-Type: text/html');
+            header('Content-Disposition: attachment; filename="deal_worksheet_' . $deal->id . '.html"');
+            echo $html;
+        }
+        
+        // Cleanup
+        if (file_exists($tempFile . '.html')) {
+            unlink($tempFile . '.html');
+        }
+        
+        sugar_cleanup(true);
+    }
+
+    /**
      * Handle analytics action  
      */
     public function action_analytics()

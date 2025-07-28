@@ -21,6 +21,7 @@ $dictionary['DM_TradeIns'] = array(
     'unified_search_default_enabled' => true,
     'duplicate_merge' => true,
     'comment' => 'Trade-In Manager for managing vehicle trade-in evaluations, market valuations, and appraisal workflow with customer and sales integration',
+    'optimistic_locking' => true,
     'fields' => array(
         
         // Standard SugarBean fields - inherited from Basic template
@@ -515,6 +516,18 @@ $dictionary['DM_TradeIns'] = array(
             'importable' => 'true',
         ),
         
+        // Photo Upload Field
+        'vehicle_photos' => array(
+            'name' => 'vehicle_photos',
+            'vname' => 'LBL_VEHICLE_PHOTOS',
+            'type' => 'image',
+            'dbType' => 'varchar',
+            'len' => '255',
+            'comment' => 'Vehicle photos upload',
+            'required' => false,
+            'reportable' => false,
+        ),
+        
         // Integration and Processing
         'used_in_deal' => array(
             'name' => 'used_in_deal',
@@ -631,19 +644,16 @@ $dictionary['DM_TradeIns'] = array(
         
         'customer_name' => array(
             'name' => 'customer_name',
-            'rname' => 'name',
-            'id_name' => 'customer_id',
             'vname' => 'LBL_CUSTOMER_NAME',
-            'type' => 'relate',
-            'table' => 'accounts',
-            'isnull' => 'true',
-            'module' => 'Accounts',
-            'dbType' => 'varchar',
-            'link' => 'customer_link',
+            'type' => 'varchar',
             'len' => '255',
-            'source' => 'non-db',
+            'required' => false,
             'unified_search' => true,
-            'comment' => 'Customer account name',
+            'comment' => 'Customer name (free text input)',
+            'audited' => true,
+            'massupdate' => true,
+            'duplicate_merge' => 'enabled',
+            'importable' => 'true',
         ),
         
         // Opportunity relationship

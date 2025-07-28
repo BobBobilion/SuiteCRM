@@ -88,6 +88,7 @@ $mod_strings = array(
     'LBL_STATUS' => 'Status',
     'LBL_APPRAISAL_SCHEDULED_DATE' => 'Appraisal Scheduled',
     'LBL_PHOTOS_TAKEN' => 'Photos Taken',
+    'LBL_VEHICLE_PHOTOS' => 'Vehicle Photos',
     'LBL_WORKFLOW' => 'Workflow',
     
     // === INTEGRATION FIELDS ===
@@ -113,6 +114,7 @@ $mod_strings = array(
     'LBL_PANEL_APPRAISAL' => 'Dealer Appraisal',
     'LBL_PANEL_PAYOFF' => 'Payoff Information',
     'LBL_PANEL_WORKFLOW' => 'Workflow & Status',
+    'LBL_PANEL_PHOTOS' => 'Photos & Documentation',
     'LBL_PANEL_PROFITABILITY' => 'Profitability Analysis',
     'LBL_PANEL_INTEGRATION' => 'Sales Integration',
     

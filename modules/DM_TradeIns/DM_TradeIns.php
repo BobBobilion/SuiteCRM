@@ -35,8 +35,9 @@ class DM_TradeIns extends Basic
     public $module_dir = "DM_TradeIns";
     public $module_name = "DM_TradeIns";
     
-    // Disable row-level security for now
+    // Disable row-level security and security groups for now
     public $disable_row_level_security = true;
+    public $disable_security_groups = true;
     
     // Enable auditing for trade-in valuations (financial compliance requirement)
     public $audited = true;

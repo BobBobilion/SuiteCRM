@@ -66,17 +66,14 @@
                 
                 <div class="action-buttons">
                     <div class="btn-group-vertical" style="width: 100%;">
-                        <button type="button" class="btn btn-info btn-block" onclick="printDealWorksheet();">
-                            <i class="fa fa-print"></i> Print Deal Worksheet
-                        </button>
-                        <button type="button" class="btn btn-warning btn-block" onclick="emailDealSummary();">
-                            <i class="fa fa-envelope"></i> Email Deal Summary
+                        <button type="button" class="btn btn-info btn-block" onclick="downloadDealWorksheet();">
+                            <i class="fa fa-download"></i> Download Deal Worksheet (PDF)
                         </button>
                         <button type="button" class="btn btn-success btn-block" onclick="generateContracts();">
                             <i class="fa fa-file-text"></i> Generate Contracts
                         </button>
-                        <button type="button" class="btn btn-primary btn-block" onclick="submitToLender();">
-                            <i class="fa fa-bank"></i> Submit to Lender
+                        <button type="submit" class="btn btn-primary btn-block" onclick="saveDeal();">
+                            <i class="fa fa-save"></i> Save Deal
                         </button>
                     </div>
                 </div>
@@ -260,14 +257,10 @@ function updateProfitSummary() {
 }
 
 // Quick action functions
-function printDealWorksheet() {
-    window.open('index.php?module=DM_FIDeals&action=PrintWorksheet&record=' + 
-        document.getElementById('record').value, '_blank');
-}
-
-function emailDealSummary() {
-    // Open email composer with deal summary
-    alert('Email functionality coming soon!');
+function downloadDealWorksheet() {
+    // Create a PDF download of the deal worksheet
+    const recordId = document.getElementById('record') ? document.getElementById('record').value : '';
+    window.open('index.php?module=DM_FIDeals&action=downloadPDF&record=' + recordId, '_blank');
 }
 
 function generateContracts() {
@@ -275,9 +268,18 @@ function generateContracts() {
     alert('Contract generation functionality coming soon!');
 }
 
-function submitToLender() {
-    // Submit to lender portal
-    alert('Lender submission functionality coming soon!');
+function saveDeal() {
+    // Trigger form save
+    const form = document.getElementById('EditView');
+    if (form) {
+        // Set action to Save
+        const actionInput = document.querySelector('input[name="action"]');
+        if (actionInput) {
+            actionInput.value = 'Save';
+        }
+        // Submit the form
+        form.submit();
+    }
 }
 
 // Override the form submit to include validation
